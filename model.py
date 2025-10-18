@@ -18,3 +18,5 @@ class Learning(db.Model):
     link = db.Column(db.String(300))
     solved_on = db.Column(db.Date, default=datetime.utcnow)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
