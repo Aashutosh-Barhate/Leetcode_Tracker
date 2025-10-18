@@ -2,9 +2,8 @@ from flask import request, jsonify, render_template, redirect, url_for, flash
 from flask_login import login_user, logout_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import app, db
-from models import User
+from model import User
 
-# 🔹 Signup (GET + POST)
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
@@ -25,7 +24,6 @@ def signup():
     return render_template('signup.html')
 
 
-# 🔹 Login (GET + POST)
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -45,7 +43,6 @@ def login():
     return render_template('login.html')
 
 
-# 🔹 Logout
 @app.route('/logout')
 @login_required
 def logout():

@@ -1,7 +1,7 @@
 from flask import request, jsonify, render_template, redirect, url_for, flash
 from flask_login import login_required, current_user
 from app import app, db
-from models import Learning
+from model import Learning
 
 # 🟢 Dashboard (View all learnings)
 @app.route('/dashboard')

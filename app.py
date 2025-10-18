@@ -15,3 +15,5 @@ login_manager.login_view = 'login'
 
 from auth_routes import *
 from learning_routes import *
+
+app.run(debug = True, port = 5050)
