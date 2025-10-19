@@ -19,8 +19,6 @@ class Learning(db.Model):
     solved_on = db.Column(db.Date, default=datetime.utcnow)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-from app import db
-db.create_all()
-exit()
+
 
 

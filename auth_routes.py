@@ -3,8 +3,14 @@ from flask_login import login_user, logout_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import app, db
 from model import User
+from flask import Blueprint
+auth_bp = Blueprint('auth', __name__)
 
-@app.route('/signup', methods=['GET', 'POST'])
+@auth_bp.route("/")
+def home():
+    return "Welcome to Leetcode Tracker!"
+
+@auth_bp.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
         username = request.form['username']
@@ -24,7 +30,7 @@ def signup():
     return render_template('signup.html')
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form['username']
@@ -43,7 +49,7 @@ def login():
     return render_template('login.html')
 
 
-@app.route('/logout')
+@auth_bp.route('/logout')
 @login_required
 def logout():
     logout_user()

@@ -2,17 +2,22 @@ from flask import request, jsonify, render_template, redirect, url_for, flash
 from flask_login import login_required, current_user
 from app import app, db
 from model import Learning
+from flask import Blueprint
 
-# 🟢 Dashboard (View all learnings)
-@app.route('/dashboard')
+learning_bp = Blueprint('learning', __name__)
+
+@app.route("/")
+def home():
+    return "Welcome to Leetcode Tracker!"
+
+@learning_bp.route('/dashboard')
 @login_required
 def dashboard():
     learnings = Learning.query.filter_by(user_id=current_user.id).all()
     return render_template('dashboard.html', learnings=learnings)
 
 
-# 🟢 Add a new learning (GET + POST)
-@app.route('/add', methods=['GET', 'POST'])
+@learning_bp .route('/add', methods=['GET', 'POST'])
 @login_required
 def add_learning():
     if request.method == 'POST':
@@ -31,8 +36,7 @@ def add_learning():
     return render_template('add_learning.html')
 
 
-# ✏️ Delete a learning
-@app.route('/delete/<int:id>')
+@learning_bp .route('/delete/<int:id>')
 @login_required
 def delete_learning(id):
     learning = Learning.query.get_or_404(id)
