@@ -1,14 +1,9 @@
-from flask import request, jsonify, render_template, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
-from app import app, db
 from model import Learning
-from flask import Blueprint
+from db_instance import db
 
 learning_bp = Blueprint('learning', __name__)
-
-@app.route("/")
-def home():
-    return "Welcome to Leetcode Tracker!"
 
 @learning_bp.route('/dashboard')
 @login_required
@@ -17,7 +12,7 @@ def dashboard():
     return render_template('dashboard.html', learnings=learnings)
 
 
-@learning_bp .route('/add', methods=['GET', 'POST'])
+@learning_bp.route('/add', methods=['GET', 'POST'])
 @login_required
 def add_learning():
     if request.method == 'POST':
@@ -32,19 +27,19 @@ def add_learning():
         db.session.add(new_learning)
         db.session.commit()
         flash("Learning added successfully!", "success")
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('learning.dashboard'))
     return render_template('add_learning.html')
 
 
-@learning_bp .route('/delete/<int:id>')
+@learning_bp.route('/delete/<int:id>')
 @login_required
 def delete_learning(id):
     learning = Learning.query.get_or_404(id)
     if learning.user_id != current_user.id:
         flash("You are not authorized to delete this entry.", "danger")
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('learning.dashboard'))
 
     db.session.delete(learning)
     db.session.commit()
     flash("Learning deleted successfully!", "info")
-    return redirect(url_for('dashboard'))
+    return redirect(url_for('learning.dashboard'))

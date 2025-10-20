@@ -1,31 +1,32 @@
-{% extends "base.html" %}
-{% block content %}
-<h2>My LeetCode Learnings</h2>
-<a href="/add" class="btn btn-success mb-3">+ Add New Learning</a>
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - Leetcode Tracker</title>
+</head>
+<body>
+    <h1>Dashboard</h1>
+    <p>Welcome, {{ current_user.username }}!</p>
+    <p><a href="{{ url_for('auth.logout') }}">Logout</a></p>
+    <p><a href="{{ url_for('learning.add_learning') }}">Add New Learning</a></p>
 
-<table class="table table-bordered">
-  <thead>
-    <tr>
-      <th>Question</th>
-      <th>Difficulty</th>
-      <th>Tags</th>
-      <th>Notes</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for l in learnings %}
-    <tr>
-      <td><a href="{{ l.link }}" target="_blank">{{ l.question }}</a></td>
-      <td>{{ l.difficulty }}</td>
-      <td>{{ l.tags }}</td>
-      <td>{{ l.notes }}</td>
-      <td>
-        <a href="/edit/{{ l.id }}" class="btn btn-sm btn-warning">Edit</a>
-        <a href="/delete/{{ l.id }}" class="btn btn-sm btn-danger">Delete</a>
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-{% endblock %}
+    <h2>Your Learnings:</h2>
+    {% if learnings %}
+        <ul>
+        {% for l in learnings %}
+            <li>
+                <strong>{{ l.question }}</strong> 
+                (Difficulty: {{ l.difficulty }}) 
+                <br>Tags: {{ l.tags }} 
+                <br>Notes: {{ l.notes }} 
+                <br>Link: <a href="{{ l.link }}" target="_blank">{{ l.link }}</a>
+                <br><a href="{{ url_for('learning.delete_learning', id=l.id) }}">Delete</a>
+            </li>
+            <hr>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No learnings added yet.</p>
+    {% endif %}
+</body>
+</html>

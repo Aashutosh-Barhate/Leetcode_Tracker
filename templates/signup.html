@@ -1,18 +1,33 @@
-{% extends "base.html" %}
-{% block content %}
-<div class="col-md-6 offset-md-3">
-  <h2>Sign Up</h2>
-  <form method="POST" action="/signup">
-    <div class="mb-3">
-      <label>Username</label>
-      <input type="text" name="username" class="form-control">
-    </div>
-    <div class="mb-3">
-      <label>Password</label>
-      <input type="password" name="password" class="form-control">
-    </div>
-    <button type="submit" class="btn btn-success">Sign Up</button>
-    <p class="mt-3">Already have an account? <a href="/login">Login</a></p>
-  </form>
-</div>
-{% endblock %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Signup - Leetcode Tracker</title>
+</head>
+<body>
+    <h1>Signup</h1>
+    
+    <!-- Flash messages from Flask -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul>
+            {% for category, message in messages %}
+                <li><strong>{{ category }}:</strong> {{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+    
+    <form action="{{ url_for('auth.signup') }}" method="post">
+        <label>Username:</label><br>
+        <input type="text" name="username" required><br><br>
+
+        <label>Password:</label><br>
+        <input type="password" name="password" required><br><br>
+
+        <button type="submit">Signup</button>
+    </form>
+
+    <p>Already have an account? <a href="{{ url_for('auth.login') }}">Login here</a></p>
+</body>
+</html>
