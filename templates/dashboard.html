@@ -1,32 +1,47 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Dashboard - Leetcode Tracker</title>
-</head>
-<body>
-    <h1>Dashboard</h1>
-    <p>Welcome, {{ current_user.username }}!</p>
-    <p><a href="{{ url_for('auth.logout') }}">Logout</a></p>
-    <p><a href="{{ url_for('learning.add_learning') }}">Add New Learning</a></p>
+{% extends "base.html" %}
 
-    <h2>Your Learnings:</h2>
-    {% if learnings %}
-        <ul>
+{% block content %}
+<h1 style="text-align:center; margin-bottom:20px;">Dashboard</h1>
+<p style="text-align:center; font-size:16px; margin-bottom:20px;">Welcome, <strong>{{ current_user.username }}</strong>!</p>
+
+<div style="text-align:center; margin-bottom:30px;">
+    <a href="{{ url_for('auth.logout') }}" style="margin-right:15px; color:#007bff; text-decoration:none;">Logout</a>
+    <a href="{{ url_for('learning.add_learning') }}" style="color:#28a745; text-decoration:none;">Add New Learning</a>
+</div>
+
+<h2 style="margin-bottom:15px; color:#333;">Your Learnings:</h2>
+
+{% if learnings %}
+    <div style="display:flex; flex-direction:column; gap:20px;">
         {% for l in learnings %}
-            <li>
-                <strong>{{ l.question }}</strong> 
-                (Difficulty: {{ l.difficulty }}) 
-                <br>Tags: {{ l.tags }} 
-                <br>Notes: {{ l.notes }} 
-                <br>Link: <a href="{{ l.link }}" target="_blank">{{ l.link }}</a>
-                <br><a href="{{ url_for('learning.delete_learning', id=l.id) }}">Delete</a>
-            </li>
-            <hr>
+        <div style="background:#fff; padding:20px; border-radius:12px; box-shadow:0 8px 20px rgba(0,0,0,0.1); transition: transform 0.3s, box-shadow 0.3s;">
+            <strong style="font-size:18px; color:#007bff;">{{ l.question }}</strong>
+            <p style="margin:5px 0; font-weight:500;">Difficulty: <span style="color:#555;">{{ l.difficulty }}</span></p>
+            <p style="margin:5px 0;">Tags: <span style="color:#555;">{{ l.tags }}</span></p>
+            <p style="margin:5px 0;">Notes: <span style="color:#555;">{{ l.notes }}</span></p>
+            {% if l.link %}
+            <p style="margin:5px 0;">Link: <a href="{{ l.link }}" target="_blank" style="color:#007bff; text-decoration:none;">{{ l.link }}</a></p>
+            {% endif %}
+            <a href="{{ url_for('learning.delete_learning', id=l.id) }}" style="color:#dc3545; text-decoration:none; font-weight:600;">Delete</a>
+        </div>
         {% endfor %}
-        </ul>
-    {% else %}
-        <p>No learnings added yet.</p>
-    {% endif %}
-</body>
-</html>
+    </div>
+{% else %}
+    <p style="color:#555; font-style:italic;">No learnings added yet.</p>
+{% endif %}
+
+<script>
+    // Card hover effect
+    const cards = document.querySelectorAll('div[style*="box-shadow"]');
+    cards.forEach(card => {
+        card.addEventListener('mouseenter', () => {
+            card.style.transform = 'translateY(-5px)';
+            card.style.boxShadow = '0 12px 25px rgba(0,0,0,0.15)';
+        });
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = 'translateY(0)';
+            card.style.boxShadow = '0 8px 20px rgba(0,0,0,0.1)';
+        });
+    });
+</script>
+{% endblock %}

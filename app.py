@@ -3,12 +3,15 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from db_instance import db
 from model import User, Learning
+from flask_cors import CORS
 
 def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'any_random_secret_key'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://leetuser:2705@localhost/leetcode_tracker'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    CORS(app, supports_credentials=True)
+
 
     # Initialize extensions
     db.init_app(app)
