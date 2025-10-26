@@ -14,12 +14,18 @@ def create_app():
     app = Flask(__name__)
     CORS(app, supports_credentials=True)
 
-    # Determine environment
+    # -------------------
+    # DATABASE CONFIG
+    # -------------------
     if os.getenv("VERCEL") == "1":  # Running on Vercel
         DATABASE_URL = os.getenv("PROD_DATABASE_URL")
-        app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL + "?sslmode=require"
-        app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {"poolclass": NullPool}  # Prevent serverless DB drops
-    else:  # Local
+        if DATABASE_URL:
+            # Add SSL and prevent serverless connection drops
+            app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL + "?sslmode=require"
+            app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {"poolclass": NullPool}
+        else:
+            raise ValueError("PROD_DATABASE_URL is not set in environment variables")
+    else:  # Local development
         db_user = os.getenv("DB_USER")
         db_password = os.getenv("DB_PASSWORD")
         db_host = os.getenv("DB_HOST")
@@ -30,6 +36,9 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SECRET_KEY'] = os.getenv("FLASK_SECRET_KEY", "default_secret_key")
 
+    # -------------------
+    # INIT EXTENSIONS
+    # -------------------
     db.init_app(app)
     bcrypt = Bcrypt(app)
     login_manager = LoginManager(app)
@@ -37,25 +46,43 @@ def create_app():
 
     @login_manager.user_loader
     def load_user(user_id):
-        return User.query.get(int(user_id))
+        try:
+            return User.query.get(int(user_id))
+        except Exception as e:
+            print(f"Error loading user: {e}")
+            return None
 
+    # -------------------
+    # REGISTER BLUEPRINTS
+    # -------------------
     from auth_routes import auth_bp
     from learning_routes import learning_bp
 
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(learning_bp, url_prefix='/learning')
 
+    # -------------------
+    # ROUTES
+    # -------------------
     @app.route('/')
     def home():
         return "Welcome to Leetcode Tracker!"
 
-    # Only create tables locally
+    # -------------------
+    # LOCAL ONLY DB INIT
+    # -------------------
     if os.getenv("VERCEL") != "1":
         with app.app_context():
-            db.create_all()
+            try:
+                db.create_all()
+            except Exception as e:
+                print(f"Error creating tables locally: {e}")
 
     return app
 
+# -------------------
+# RUN LOCALLY
+# -------------------
 if __name__ == '__main__':
     app = create_app()
     app.run(debug=True, port=4080)
