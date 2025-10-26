@@ -7,19 +7,29 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 import os
 
-# Load .env file (for local)
+# Load local .env for development
 load_dotenv()
 
 def create_app():
     app = Flask(__name__)
     CORS(app, supports_credentials=True)
 
-    # Detect environment
-    database_url = os.getenv("PROD_DATABASE_URL")  # set on Vercel
-    if database_url:
-        app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+    # SECRET KEY
+    app.config['SECRET_KEY'] = os.getenv("FLASK_SECRET_KEY", "default_secret_key")
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+    # DATABASE CONFIG
+    DATABASE_URL = os.getenv("PROD_DATABASE_URL")
+    if DATABASE_URL:
+        # Production (Vercel) — add SSL for PostgreSQL
+        if "?" not in DATABASE_URL:
+            DATABASE_URL += "?sslmode=require"
+        else:
+            DATABASE_URL += "&sslmode=require"
+        app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
         print("✅ Running in PRODUCTION mode (Vercel)")
     else:
+        # Local development
         db_user = os.getenv("DB_USER")
         db_password = os.getenv("DB_PASSWORD")
         db_host = os.getenv("DB_HOST")
@@ -28,9 +38,7 @@ def create_app():
         app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
         print("💻 Running in LOCAL mode")
 
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SECRET_KEY'] = os.getenv("FLASK_SECRET_KEY", "default_secret_key")
-
+    # INIT DB
     db.init_app(app)
     bcrypt = Bcrypt(app)
     login_manager = LoginManager(app)
@@ -40,17 +48,19 @@ def create_app():
     def load_user(user_id):
         return User.query.get(int(user_id))
 
+    # REGISTER BLUEPRINTS
     from auth_routes import auth_bp
     from learning_routes import learning_bp
 
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(learning_bp, url_prefix='/learning')
 
+    # HOME ROUTE
     @app.route('/')
     def home():
-        return "🚀 Leetcode Tracker is running successfully!"
+        return "Welcome to Leetcode Tracker!"
 
-    # ✅ Create all tables automatically (once)
+    # CREATE TABLES AUTOMATICALLY
     with app.app_context():
         try:
             db.create_all()
@@ -60,7 +70,7 @@ def create_app():
 
     return app
 
-
 if __name__ == '__main__':
     app = create_app()
+    # Run locally on port 4080
     app.run(debug=True, port=4080)
