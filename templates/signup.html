@@ -18,7 +18,7 @@
     {% endwith %}
 
     <!-- Signup Form -->
-    <form action="{{ url_for('auth.signup') }}" method="post">
+    <form action="{{ url_for('auth_bp.signup') }}" method="post">
         <label>Username:</label>
         <input type="text" name="username" required>
 
@@ -28,7 +28,7 @@
         <button type="submit">Signup</button>
     </form>
 
-    <p class="switch-auth">Already have an account? <a href="{{ url_for('auth.login') }}">Login here</a></p>
+    <p class="switch-auth">Already have an account? <a href="{{ url_for('auth_bp.login') }}">Login here</a></p>
 </div>
 
 <!-- ===== Styles ===== -->

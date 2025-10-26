@@ -20,7 +20,6 @@ def create_app():
     if os.getenv("VERCEL") == "1":  # Running on Vercel
         DATABASE_URL = os.getenv("PROD_DATABASE_URL")
         if DATABASE_URL:
-            # Add SSL and prevent serverless connection drops
             app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL + "?sslmode=require"
             app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {"poolclass": NullPool}
         else:
@@ -42,7 +41,7 @@ def create_app():
     db.init_app(app)
     bcrypt = Bcrypt(app)
     login_manager = LoginManager(app)
-    login_manager.login_view = 'auth.login'
+    login_manager.login_view = 'auth_bp.login'  # FIXED: use blueprint endpoint
 
     @login_manager.user_loader
     def load_user(user_id):

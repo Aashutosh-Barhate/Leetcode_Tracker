@@ -5,8 +5,8 @@
 <p style="text-align:center; font-size:16px; margin-bottom:20px;">Welcome, <strong>{{ current_user.username }}</strong>!</p>
 
 <div style="text-align:center; margin-bottom:30px;">
-    <a href="{{ url_for('auth.logout') }}" style="margin-right:15px; color:#007bff; text-decoration:none;">Logout</a>
-    <a href="{{ url_for('learning.add_learning') }}" style="color:#28a745; text-decoration:none;">Add New Learning</a>
+    <a href="{{ url_for('auth_bp.logout') }}" style="margin-right:15px; color:#007bff; text-decoration:none;">Logout</a>
+    <a href="{{ url_for('learning_bp.add_learning') }}" style="color:#28a745; text-decoration:none;">Add New Learning</a>
 </div>
 
 <h2 style="margin-bottom:15px; color:#333;">Your Learnings:</h2>
@@ -22,7 +22,7 @@
             {% if l.link %}
             <p style="margin:5px 0;">Link: <a href="{{ l.link }}" target="_blank" style="color:#007bff; text-decoration:none;">{{ l.link }}</a></p>
             {% endif %}
-            <a href="{{ url_for('learning.delete_learning', id=l.id) }}" style="color:#dc3545; text-decoration:none; font-weight:600;">Delete</a>
+            <a href="{{ url_for('learning_bp.delete_learning', id=l.id) }}" style="color:#dc3545; text-decoration:none; font-weight:600;">Delete</a>
         </div>
         {% endfor %}
     </div>

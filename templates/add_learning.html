@@ -127,7 +127,7 @@
 <body>
     <div class="container">
         <h1>Add New Learning</h1>
-        <p><a href="{{ url_for('learning.dashboard') }}">Back to Dashboard</a></p>
+        <p><a href="{{ url_for('learning_bp.dashboard') }}">Back to Dashboard</a></p>
 
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -139,7 +139,7 @@
             {% endif %}
         {% endwith %}
 
-        <form action="{{ url_for('learning.add_learning') }}" method="post">
+        <form action="{{ url_for('learning_bp.add_learning') }}" method="post">
             <label>Question Title:</label><br>
             <input type="text" name="question" required><br>
 
