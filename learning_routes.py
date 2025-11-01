@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from model import Learning
 from db_instance import db
 
-learning_bp = Blueprint('learning_bp', __name__)  # FIXED: matches app.py registration
+learning_bp = Blueprint('learning_bp', __name__)  
 
 @learning_bp.route('/dashboard')
 @login_required
@@ -26,7 +26,7 @@ def add_learning():
         db.session.add(new_learning)
         db.session.commit()
         flash("Learning added successfully!", "success")
-        return redirect(url_for('learning_bp.dashboard'))  # FIXED
+        return redirect(url_for('learning_bp.dashboard'))  
 
     return render_template('add_learning.html')
 
@@ -36,9 +36,9 @@ def delete_learning(id):
     learning = Learning.query.get_or_404(id)
     if learning.user_id != current_user.id:
         flash("You are not authorized to delete this entry.", "danger")
-        return redirect(url_for('learning_bp.dashboard'))  # FIXED
+        return redirect(url_for('learning_bp.dashboard'))  
 
     db.session.delete(learning)
     db.session.commit()
     flash("Learning deleted successfully!", "info")
-    return redirect(url_for('learning_bp.dashboard'))  # FIXED
+    return redirect(url_for('learning_bp.dashboard'))  

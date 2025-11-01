@@ -14,10 +14,8 @@ def create_app():
     app = Flask(__name__)
     CORS(app, supports_credentials=True)
 
-    # -------------------
-    # DATABASE CONFIG
-    # -------------------
-    if os.getenv("VERCEL") == "1":  # Running on Vercel
+
+    if os.getenv("VERCEL") == "1":  
         DATABASE_URL = os.getenv("PROD_DATABASE_URL")
         if DATABASE_URL:
             app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL + "?sslmode=require"
@@ -35,13 +33,11 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SECRET_KEY'] = os.getenv("FLASK_SECRET_KEY", "default_secret_key")
 
-    # -------------------
-    # INIT EXTENSIONS
-    # -------------------
+
     db.init_app(app)
     bcrypt = Bcrypt(app)
     login_manager = LoginManager(app)
-    login_manager.login_view = 'auth_bp.login'  # FIXED: use blueprint endpoint
+    login_manager.login_view = 'auth_bp.login' 
 
     @login_manager.user_loader
     def load_user(user_id):
@@ -51,25 +47,19 @@ def create_app():
             print(f"Error loading user: {e}")
             return None
 
-    # -------------------
-    # REGISTER BLUEPRINTS
-    # -------------------
+
     from auth_routes import auth_bp
     from learning_routes import learning_bp
 
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(learning_bp, url_prefix='/learning')
 
-    # -------------------
-    # ROUTES
-    # -------------------
+
     @app.route('/')
     def home():
         return "Welcome to Leetcode Tracker!"
 
-    # -------------------
-    # LOCAL ONLY DB INIT
-    # -------------------
+
     if os.getenv("VERCEL") != "1":
         with app.app_context():
             try:
@@ -79,9 +69,7 @@ def create_app():
 
     return app
 
-# -------------------
-# RUN LOCALLY
-# -------------------
+
 if __name__ == '__main__':
     app = create_app()
     app.run(debug=True, port=4080)
